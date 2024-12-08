@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-class VNW_Admin {
+class VNWOO_Admin {
 
     public function __construct() {
         // Hooks for the custom variation name field
@@ -20,19 +20,19 @@ class VNW_Admin {
     // Add custom variation name field
     public function add_variation_name_field($loop, $variation_data, $variation) {
         woocommerce_wp_text_input([
-            'id' => "vnw_variation_name_$loop",
-            'name' => "vnw_variation_name_$loop",
+            'id' => "vnwoo_variation_name_$loop",
+            'name' => "vnwoo_variation_name_$loop",
             'label' => __('Variation Name', 'variation-name-for-woocommerce'),
-            'value' => get_post_meta($variation->ID, 'vnw_variation_name', true),
+            'value' => get_post_meta($variation->ID, 'vnwoo_variation_name', true),
             'desc_tip' => true,
         ]);
     }
 
     // Save the variation name field
     public function save_variation_name_field($variation_id, $i) {
-        if (isset($_POST["vnw_variation_name_$i"])) {
+        if (isset($_POST["vnwoo_variation_name_$i"])) {
             $variation = wc_get_product($variation_id); // Get the variation object
-            $variation->update_meta_data('vnw_variation_name', sanitize_text_field(wp_unslash($_POST["vnw_variation_name_$i"])));
+            $variation->update_meta_data('vnwoo_variation_name', sanitize_text_field(wp_unslash($_POST["vnwoo_variation_name_$i"])));
             $variation->save(); // Save the changes
         }
     }
@@ -44,7 +44,7 @@ class VNW_Admin {
         if ($product_object && $product_object->is_type('variable')) {
             $tabs['variation_name_settings'] = [
                 'label'    => __('Variation Name', 'variation-name-for-woocommerce'),
-                'target'   => 'vnw_variation_name_settings_options',
+                'target'   => 'vnwoo_variation_name_settings_options',
                 'class'    => ['show_if_variable'],
                 'priority' => 60,
             ];
@@ -55,10 +55,10 @@ class VNW_Admin {
 
     // Add settings content to the custom tab
     public function add_variation_name_settings_tab_content() {
-        echo '<div id="vnw_variation_name_settings_options" class="panel woocommerce_options_panel show_if_variable">';
+        echo '<div id="vnwoo_variation_name_settings_options" class="panel woocommerce_options_panel show_if_variable">';
         echo '<div class="options_group">';
         woocommerce_wp_checkbox([
-            'id'          => 'vnw_display_variation_name',
+            'id'          => 'vnwoo_display_variation_name',
             'label'       => __('Display variation name', 'variation-name-for-woocommerce'),
             'description' => __('Enable to show variation names instead of dropdowns on the product page.', 'variation-name-for-woocommerce'),
         ]);
@@ -69,8 +69,8 @@ class VNW_Admin {
     // Save the display setting
     public function save_variation_name_settings($post_id) {
         $product = wc_get_product($post_id); // Get the product object
-        $display_variation_name = isset($_POST['vnw_display_variation_name']) ? 'yes' : 'no';
-        $product->update_meta_data('vnw_display_variation_name', $display_variation_name);
+        $display_variation_name = isset($_POST['vnwoo_display_variation_name']) ? 'yes' : 'no';
+        $product->update_meta_data('vnwoo_display_variation_name', $display_variation_name);
         $product->save(); // Save the product to persist changes
     }
 }

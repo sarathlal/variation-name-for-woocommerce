@@ -28,15 +28,15 @@ if (!defined('ABSPATH')) {
 }
 
 // Include the necessary files
-require_once plugin_dir_path(__FILE__) . 'includes/class-vnw-admin.php';
-require_once plugin_dir_path(__FILE__) . 'includes/class-vnw-public.php';
+require_once plugin_dir_path(__FILE__) . 'includes/class-vnwoo-admin.php';
+require_once plugin_dir_path(__FILE__) . 'includes/class-vnwoo-public.php';
 
 // Initialize the plugin
-function vnw_init() {
+function vnwoo_init() {
     if (is_admin()) {
-        new VNW_Admin(); // Initialize admin-specific functionality
+        new VNWOO_Admin(); // Initialize admin-specific functionality
     } else {
-        new VNW_Public(); // Initialize public-specific functionality
+        new VNWOO_Public(); // Initialize public-specific functionality
     }
 }
-add_action('plugins_loaded', 'vnw_init');
+add_action('plugins_loaded', 'vnwoo_init');

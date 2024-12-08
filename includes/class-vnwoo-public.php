@@ -4,10 +4,12 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-class VNW_Public {
+class VNWOO_Public {
 
     public function __construct() {
         add_action('woocommerce_after_variations_table', [$this, 'display_variation_radio_buttons']);
+        add_action('wp_enqueue_scripts', [$this, 'enqueue_inline_css']);
+        add_action('wp_enqueue_scripts', [$this, 'enqueue_inline_js'], 999);
         add_action('wp_footer', [$this, 'add_variation_radio_buttons_script']);
         add_filter('woocommerce_available_variation', [$this, 'add_custom_title_to_variations'], 10, 3);
     }
@@ -27,7 +29,7 @@ class VNW_Public {
         }
 
         // Check if "Display variation name" setting is enabled for this product
-        return 'yes' === $product->get_meta('vnw_display_variation_name');
+        return 'yes' === $product->get_meta('vnwoo_display_variation_name');
     }
 
     // Display variation radio buttons
@@ -38,16 +40,10 @@ class VNW_Public {
 
         global $product;
         $available_variations = $product->get_available_variations();
-
-        echo '<style>
-                    .variations_form .variations { 
-                        display: none !important; 
-                    }
-                </style>';
         echo '<div class="variation-options">';
         foreach ($available_variations as $variation_data) {
             $variation = wc_get_product($variation_data['variation_id']); // Get the variation object
-            $variation_name = $variation->get_meta('vnw_variation_name') ?: implode(' / ', $variation_data['attributes']);
+            $variation_name = $variation->get_meta('vnwoo_variation_name') ?: implode(' / ', $variation_data['attributes']);
 
             echo '<label>';
             echo '<input type="radio" name="variation" value="' . esc_attr($variation->get_id()) . '"> ';
@@ -56,6 +52,24 @@ class VNW_Public {
         }
         echo '</div>';
     }
+
+    function enqueue_inline_css() {
+        wp_enqueue_style('vnwoo-public-style', false); // Use `false` to avoid loading an actual file
+
+        // Add inline CSS
+        $custom_css = '.variations_form .variations{display: none !important;}';
+        wp_add_inline_style('vnwoo-public-style', $custom_css);
+    }
+
+    function enqueue_inline_js() {
+        // Enqueue a base script (use an existing script or register a minimal one)
+        wp_enqueue_script('vnwoo-public-script', false, [], false, true); // `false` as source, `true` for footer placement
+
+        // Add inline JavaScript
+        $custom_js = 'console.log("Hello from my plugin!");';
+        wp_add_inline_script('vnwoo-public-script', $custom_js);
+    }
+
 
     // Add JavaScript for handling variation selection with radio buttons
     public function add_variation_radio_buttons_script() {
@@ -101,7 +115,7 @@ class VNW_Public {
 
     // Add custom title to each variation data for the frontend
     public function add_custom_title_to_variations($variation_data, $product, $variation) {
-        $variation_name = $variation->get_meta('vnw_variation_name');
+        $variation_name = $variation->get_meta('vnwoo_variation_name');
         $variation_data['variation_name'] = $variation_name ?: implode(' / ', $variation_data['attributes']);
         return $variation_data;
     }
